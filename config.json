@@ -1,0 +1,8 @@
+{
+    "Parameters": {
+      "Service": "device-service", 
+      "Stage": "dev",
+      "S3BucketName": "s3://io.polimetla.codepipeline.device-service"          
+    }
+  }
+  

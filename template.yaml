@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Simple implementation of a microservice to query and insert data in DynamoDB Database
+Globals:
+  Function:
+    Runtime: nodejs10.x
+    Timeout: 3
+    Environment:
+      Variables:
+        TABLE: !Ref DeviceServiceTable        
+
+Parameters:
+  Service:
+    Type: String
+    Description: The name of the service
+  Stage:
+    Type: String
+    Description: The stage name for deployment
+  S3BucketName:
+    Type: String
+    Description: The S3 Bucket name for the artifacts
+  ReadCapacity:
+    Type: Number
+    Default: 1
+    Description: The ReadCapacityUnits value
+  WriteCapacity:
+    Type: Number
+    Default: 1
+    Description: The WriteCapacityUnits value  
+
+Resources:
+
+  DeviceServiceApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Stage      
+      DefinitionBody:
+          'Fn::Transform':
+            Name: 'AWS::Include'
+            Parameters:
+              Location: !Join [ '', [ !Ref S3BucketName, '/swagger.yaml'  ] ]
+              
+  GetDeviceListFunction:
+    Type: AWS::Serverless::Function    
+    Properties:
+      CodeUri: src/functions/list-devices/
+      Handler: index.handler
+      Timeout: 10 # Scan may need longer processing time
+      FunctionName: !Join [ '-', [ !Ref Service, 'list-devices' ] ]
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref DeviceServiceTable      
+     
+  GetDeviceListFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetDeviceListFunction
+      Principal: apigateway.amazonaws.com
+
+  GetDeviceFunction:
+    Type: AWS::Serverless::Function    
+    Properties:
+      CodeUri: src/functions/get-device/
+      Handler: index.handler
+      FunctionName: !Join [ '-', [ !Ref Service, 'get-device' ] ]
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref DeviceServiceTable        
+     
+  GetDeviceFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref GetDeviceFunction
+      Principal: apigateway.amazonaws.com
+
+  PostOrPutDeviceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/functions/post-or-put-device
+      Handler: index.handler
+      FunctionName: !Join [ '-', [ !Ref Service, 'create-or-update-device' ] ]
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DeviceServiceTable
+
+  PostOrPutDeviceFunctionPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref PostOrPutDeviceFunction
+      Principal: apigateway.amazonaws.com
+
+  DeviceServiceTable:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      TableName: !Sub '${Service}-table'      
+      AttributeDefinitions:
+        - AttributeName: "deviceId"
+          AttributeType: "S"        
+      KeySchema:
+        - AttributeName: "deviceId"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: !Ref ReadCapacity
+        WriteCapacityUnits: !Ref WriteCapacity
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true

@@ -1,0 +1,190 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: device-service
+  description: Welcome to API documentation of Device Service by GitHub/S-Polimetla
+  
+schemes:
+  - https
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: x-api-key
+    in: header
+x-amazon-apigateway-request-validators:
+  RequestValidator:
+    validateRequestBody: true
+    validateRequestParameters: true
+x-amazon-apigateway-request-validator: RequestValidator
+    
+paths:
+  /device:
+    get:
+      summary: Get List of DeviceIds
+      parameters:
+        - name: limit
+          in: query
+          description: The maximum number of devices to fetch
+          required: false
+          type: integer
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Device"
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal server error
+      security:
+        - api_key: []
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetDeviceListFunction.Arn}/invocations
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
+            
+    post:
+      summary: Register a new device
+      parameters:
+        - name: device
+          in: body
+          description: The content of the device
+          required: true
+          schema:
+            $ref: "#/definitions/Device"
+      responses:
+        "204":
+          description: Successful operation          
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal server error
+      security:
+        - api_key: []
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "204"
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PostOrPutDeviceFunction.Arn}/invocations
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
+
+  /device/{deviceId}:
+    get:
+      summary: Get device Info      
+      parameters:
+        - name: deviceId
+          in: path
+          description: The id of the device
+          required: true
+          type: string
+          minLength: 36
+          maxLength: 36
+      produces:
+        - "application/json"
+      responses:
+        "200":
+          description: Successful operation
+          schema:
+            $ref: "#/definitions/Device"
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "404":
+          description: Not Found
+        "500":
+          description: Internal server error
+      security:
+        - api_key: []
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "200"
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetDeviceFunction.Arn}/invocations
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
+  
+    put:
+      summary: Register or update a device      
+      parameters:
+        - name: deviceId
+          in: path
+          description: The id of the device
+          required: false
+          type: string
+          maxLength: 36
+          minLength: 36
+        - name: device
+          in: body
+          description: The content of the device
+          required: true
+          schema:
+            $ref: "#/definitions/Device"   
+      responses:
+        "204":
+          description: Successful operation          
+        "400":
+          description: Bad request
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+        "500":
+          description: Internal server error
+      security:
+        - api_key: []
+      x-amazon-apigateway-integration:
+        responses:
+          default:
+            statusCode: "204"
+        uri:
+          Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PostOrPutDeviceFunction.Arn}/invocations
+        passthroughBehavior: "when_no_match"
+        httpMethod: "POST"
+        contentHandling: "CONVERT_TO_TEXT"
+        type: "aws_proxy"
+
+definitions:
+  Device:
+    type: "object"
+    description: "A Single device entry"
+    properties:
+      name:
+        type: "string"        
+      firmwareVersion:
+        type: "string"        
+      firmwareRevision:
+        type: "string"        
+    required:
+      - name
+      - firmwareVersion
+      - firmwareRevision

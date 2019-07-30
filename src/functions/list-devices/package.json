@@ -1,0 +1,27 @@
+{
+  "name": "dynamodb-read-write",
+  "version": "0.0.1",
+  "description": "Queries device information from the Database",
+  "main": "index.js",
+  "repository": "https://github.com/S-Polimetla/lambda-dynamodb-api-sam",
+  "author": "S-Polimetla",
+  "scripts": {
+    "test": "mocha test/tests.js",
+    "lint": "./node_modules/.bin/eslint **/*.js"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.498.0",
+    "chai": "^4.2.0",
+    "eslint": "^6.1.0",
+    "eslint-config-standard": "^13.0.1",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "mocha": "^6.2.0",
+    "sinon": "^7.3.2"
+  },
+  "dependencies": {
+    "moment": "^2.24.0"
+  }
+}

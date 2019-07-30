@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 10
+    commands:
+      # Install the dependencies, run linter and unit tests
+      - bash build.sh 
+  pre_build:
+    commands:
+      # Upload the swagger file for later processing
+      - aws s3 cp swagger.yaml s3://$S3_BUCKET       
+  build:
+    commands:
+      # Create and upload a deployment package
+      - aws cloudformation package --template-file template.yaml --s3-bucket $S3_BUCKET --output-template-file template-output.yaml
+  
+artifacts:
+  files:
+    - template-output.yaml
+    - config.json   

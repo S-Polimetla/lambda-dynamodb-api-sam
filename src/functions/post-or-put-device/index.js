@@ -5,7 +5,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.TABLE;
 
 exports.handler = async (event) => {
-  const deviceId = event.pathParameters ? event.pathParameters.deviceId : null;
+  let deviceId = event.pathParameters ? event.pathParameters.deviceId : null;
   const requestBody = event.body;
   if (!deviceId) { // id does not exist in the HTTP request, generate it. Insert action
     deviceId = this.generateUuid();

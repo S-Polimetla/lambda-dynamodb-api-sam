@@ -5,7 +5,7 @@ const tableName = process.env.TABLE;
 exports.handler = async (event) => {
   const deviceId = event.pathParameters.deviceId;
   try {
-    var deviceInfo = await this.loadDevice(deviceId);
+    const deviceInfo = await this.loadDevice(deviceId);
     if (!deviceInfo) {
       return {
         statusCode: 404
@@ -24,14 +24,14 @@ exports.handler = async (event) => {
 };
 
 exports.loadDevice = async (deviceId) => {
-  var params = {
+  const params = {
     TableName: tableName,
     Key: {
       deviceId: deviceId
     }
   };
 
-  var device = await docClient.get(params).promise();
+  const device = await docClient.get(params).promise();
   if (!device.Item || !device.Item.deviceInfo) return null;
   return device.Item.deviceInfo;
 };

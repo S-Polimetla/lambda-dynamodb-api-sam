@@ -5,7 +5,7 @@ const docClient = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.TABLE;
 
 exports.handler = async (event) => {
-  var deviceId = event.pathParameters ? event.pathParameters.deviceId : null;
+  const deviceId = event.pathParameters ? event.pathParameters.deviceId : null;
   const requestBody = event.body;
   if (!deviceId) { // id does not exist in the HTTP request, generate it. Insert action
     deviceId = this.generateUuid();
@@ -32,7 +32,7 @@ exports.putDevice = async (deviceId, body) => {
   // Reason: API Gateway stringifies JSON objects. Thus body is string when called from API Gateway
   // On Lambda console, body is received as a object.  This causes an error while testing with Lambda console
   if (typeof (body) !== 'object') body = JSON.parse(body);
-  var params = {
+  const params = {
     TableName: tableName,
     Key: {
       deviceId: deviceId

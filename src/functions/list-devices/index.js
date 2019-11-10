@@ -5,8 +5,8 @@ const tableName = process.env.TABLE;
 
 exports.handler = async (event) => {
   try {
-    var params = this.buildParams(event);
-    var deviceList = await this.loadDeviceList(params);
+    const params = this.buildParams(event);
+    const deviceList = await this.loadDeviceList(params);
     return {
       statusCode: 200,
       body: JSON.stringify(deviceList)
@@ -21,8 +21,8 @@ exports.handler = async (event) => {
 
 exports.buildParams = (event) => {
   const startDate = event.queryStringParameters ? event.queryStringParameters.startDate : null;
-  var limit = event.queryStringParameters ? event.queryStringParameters.limit : null;
-  var params = {
+  let limit = event.queryStringParameters ? event.queryStringParameters.limit : null;
+  const params = {
     TableName: tableName,
     ProjectionExpression: 'deviceId'
   };
@@ -46,7 +46,7 @@ exports.buildParams = (event) => {
 };
 
 exports.loadDeviceList = async (params) => {
-  var deviceList = await docClient.scan(params).promise();
+  const deviceList = await docClient.scan(params).promise();
   return deviceList.Items.map(device => {
     return device.deviceId;
   });

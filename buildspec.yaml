@@ -19,4 +19,4 @@ phases:
 artifacts:
   files:
     - template-output.yaml
-    - config.json   
+    - config.json 

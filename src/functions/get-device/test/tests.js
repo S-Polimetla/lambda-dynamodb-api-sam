@@ -32,7 +32,7 @@ describe('Test get-device', function () {
     const result = await app.handler(event);
     sinon.assert.calledWithExactly(loadDeviceStub, 'testId');
     expect(result).to.be.an('object');
-    expect(result.statusCode).to.equal(200);
+    expect(result.statusCode).to.equal(201);
     const response = JSON.parse(result.body);
     expect(response).to.be.an('object');
     expect(response).to.be.deep.eq(jsonResponse);

@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const uuidv1 = require('uuid/v1');
+const uuid = require('uuid');
 const moment = require('moment');
 const docClient = new AWS.DynamoDB.DocumentClient();
 const tableName = process.env.TABLE;
@@ -24,7 +24,7 @@ exports.handler = async (event) => {
 };
 
 exports.generateUuid = () => {
-  return uuidv1(); // UUID generated based on timestamp
+  return uuid.v4(); // UUID generated based on timestamp
 };
 
 exports.putDevice = async (deviceId, body) => {

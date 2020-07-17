@@ -1,6 +1,6 @@
 'use strict';
 
-const uuidv1 = require('uuid/v1');
+const uuid = require('uuid');
 const app = require('../index.js');
 const chai = require('chai');
 const sinon = require('sinon');
@@ -9,11 +9,11 @@ const expect = chai.expect;
 describe('Test put-device', function () {
   var putDeviceStub;
   var generateUuidStub;
-  const uuid = uuidv1();
+  const uuidv4 = uuid.v4();
 
   beforeEach(function () {
     putDeviceStub = sinon.stub(app, 'putDevice');
-    generateUuidStub = sinon.stub(app, 'generateUuid').returns(uuid);
+    generateUuidStub = sinon.stub(app, 'generateUuid').returns(uuidv4);
   });
 
   afterEach(function () {
@@ -49,15 +49,15 @@ describe('Test put-device', function () {
 
     const result = await app.handler(event);
     sinon.assert.calledWithExactly(generateUuidStub);
-    sinon.assert.calledWithExactly(putDeviceStub, uuid, event.body);
+    sinon.assert.calledWithExactly(putDeviceStub, uuidv4, event.body);
     expect(result).to.be.deep.eq({ statusCode: 204 });
   });
 });
 
 describe('Test generateUuid function', function () {
   it('Verifies generation of uuid', async () => {
-    const uuid = app.generateUuid();
-    expect(uuid).to.be.an('string');
-    expect(uuid).to.has.lengthOf(36);
+    const uuidv4 = app.generateUuid();
+    expect(uuidv4).to.be.an('string');
+    expect(uuidv4).to.has.lengthOf(36);
   });
 });

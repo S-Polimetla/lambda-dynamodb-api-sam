@@ -22,6 +22,6 @@
     "sinon": "^9.2.1"
   },
   "dependencies": {
-    "moment": "^2.29.1"
+    "moment": "^2.29.4"
   }
 }

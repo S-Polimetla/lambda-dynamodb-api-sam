@@ -3,7 +3,7 @@ Transform: AWS::Serverless-2016-10-31
 Description: Simple implementation of a microservice to query and insert data in DynamoDB Database
 Globals:
   Function:
-    Runtime: nodejs10.x
+    Runtime: nodejs18.x
     Timeout: 3
     Environment:
       Variables:

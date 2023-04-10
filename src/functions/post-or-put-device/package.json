@@ -10,7 +10,7 @@
     "lint": "./node_modules/.bin/eslint **/*.js"
   },
   "devDependencies": {
-    "aws-sdk": "^2.1328.0",
+    "aws-sdk": "^2.1354.0",
     "chai": "^4.3.7",
     "eslint": "^8.35.0",
     "eslint-config-standard": "^17.0.0",
